@@ -1,0 +1,569 @@
+<style>
+    .left-column {
+        padding-top:80px;
+        width: 25%;
+        float: left;
+    }
+    
+    .middle-column {
+        width: 50%;
+        float: left;
+    }
+    
+    .right-column {
+        margin-top: 30px;
+        width: 20%;
+        padding-left: 30px;
+        padding-right: 30px;
+        float: left;
+        background-color: #f4fbff;
+        margin-left: 3%;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+    
+    
+    .right-column h2 {
+        margin-bottom: 10px;
+        font-size:18px;
+    }
+        
+    input[type="text"] {
+        margin-top:10px;
+        padding: 10px;
+        margin-bottom: 0px;
+        border-radius: 5px;
+        width: 100%;
+        border-width: 2px;
+        font-size: 14px;
+        border-color: #005089;
+        box-sizing: border-box;
+    }
+    
+    .middle-column .button {         
+        padding: 0.3em 1em;
+        font-size: 17px;  
+    }
+    
+    .button {
+        display: inline-block;
+        padding: 0.3em 1em;
+        margin-bottom: 7px;
+        background: #EEE;
+        border: none;
+        border-radius: 7px !important;
+        text-align: right;
+        color: #222;
+        font-size: 15px;
+        cursor: pointer;
+        clear: both;
+        text-transform: none;
+    }
+    
+    .button:hover {
+        background-color: #8CF;
+        color: #222;
+    }
+    
+    .button:active,
+    .button.is-checked {
+        background-color: #28F;
+    }
+    
+    .button.is-checked {
+        color: white;
+    }
+    
+    .button:active {
+        box-shadow: inset 0 1px 10px hsla(0, 0%, 0%, 0.8);
+    }
+    
+    .button-group:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+    
+    .left-column .button-group .button {
+        float: right;
+        border-radius: 0;
+        margin-left: 0;
+        margin-right: 20px;
+    }
+
+    .middle-column .button-group .button {
+        float: left;
+        clear:none;       
+    }
+    
+    .grid:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+            
+    .element-item {
+        position: relative;
+        float: left;
+        width: 100%;
+        margin-bottom: 0px;
+        margin-top: 10px;
+        padding: 0px;
+        background: white;   
+    }
+    
+    .element-item>* {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .element-item .index {
+        font-size: 16px;
+        font-weight: bold;
+        color: #666;
+        font-family: "Segoe UI", "Segoe", Tahoma, Helvetica, Arial, sans-serif;  
+    }
+
+     .grid {
+        opacity: 0;
+     }
+    
+
+    .link{
+        font-size: 14px;
+
+    }
+
+     .loader img{
+        margin: auto; 
+    }
+
+
+    @media screen and (max-width: 1500px) {
+       
+        .middle-column .button {         
+        font-size: 15px;  
+        }
+
+        .left-column .button {
+        font-size: 14px;
+        }
+          
+        } 
+
+        @media screen and (max-width: 920px) {
+        
+        .left-column {
+            display: none;
+        }
+
+        .right-column {
+            width : 100% ;
+            margin-left:0;
+        }
+
+        .middle-column {
+            width : 100% ;
+            
+        }
+
+        }
+          
+
+</style>
+
+<div id="app">
+
+    <p  id="result"></p>
+      
+    <div class="left-column">  
+            <div style="text-align:right; margin-right: 20px; margin-bottom : 11px; font-size: 15px; color : #004b81"><b>Topic filters</b></div>
+        <div class="filters">
+            <div class="ui-group"> 
+                <div class="button-group js-radio-button-group" data-filter-group="theme">
+                   
+          
+                    <button type="button" class="button is-checked" data-filter="">All</button>
+                
+                     <div v-for="themeCategorie in orderedThemeCategories">
+
+                            <button type="button" class="button" :data-filter="'.'+themeCategorie.Title">{{themeCategorie.Description}}</button>
+
+                    </div> 
+                                
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="middle-column">
+        <div style="margin-bottom: 11px; margin-left: 5px; font-size: 15px; color : #004b81"><b>Contract type filters</b></div>
+        <div class="filters">
+            <div class="ui-group">
+                <div class="button-group js-radio-button-group" data-filter-group="contract">
+
+                        <div v-for="contractCategorie in orderedContractCategories">
+                                <button type="button" class="button" :data-filter="'.'+contractCategorie.Title">{{contractCategorie.Description}}</button>
+                        </div> 
+
+                </div>
+            </div>
+            
+            <p><input type="text" class="quicksearch" placeholder="Search" /></p>
+            <div class="loader">
+               <img src="https://intranet.itu.int/gs/hrmd/PublishingImages/Pages/hr-handbook/Spinner-1s-200px.gif" width="80" style="margin:auto; display:block"> 
+            </div>
+
+        </div>
+    
+        <div class="grid">
+                <div v-for="(term, i) in index">
+                    <div class="element-item" :class="[categories[i], categories2[i]]" >
+                            <p class="index">{{term.Title}}</p>
+                            <div class="link">
+                                <a v-if="term.Link_x0020_1 !== null" :href="term.URL_x0020_1" target="_blank">- {{term.Link_x0020_1}}<br></a>
+                                <a v-if="term.Link_x0020_2 !== null" :href="term.URL_x0020_2" target="_blank">- {{term.Link_x0020_2}}<br></a>
+                                <a v-if="term.Link_x0020_3 !== null" :href="term.URL_x0020_3" target="_blank">- {{term.Link_x0020_3}}<br></a>
+                                <a v-if="term.Link_x0020_4 !== null" :href="term.URL_x0020_4" target="_blank">- {{term.Link_x0020_4}}<br></a>
+                                <a v-if="term.Link_x0020_5 !== null" :href="term.URL_x0020_5" target="_blank">- {{term.Link_x0020_5}}<br></a>
+                                <a v-if="term.Link_x0020_6 !== null" :href="term.URL_x0020_6" target="_blank">- {{term.Link_x0020_6}}<br></a>
+                                <a v-if="term.Link_x0020_7 !== null" :href="term.URL_x0020_7" target="_blank">- {{term.Link_x0020_7}}<br></a>
+                                <a v-if="term.Link_x0020_8 !== null" :href="term.URL_x0020_8" target="_blank">- {{term.Link_x0020_8}}<br></a>
+                                <a v-if="term.Link_x0020_9 !== null" :href="term.URL_x0020_9" target="_blank">- {{term.Link_x0020_9}}<br></a>
+                                <a v-if="term.Link_x0020_10 !== null" :href="term.URL_x0020_10" target="_blank">- {{term.Link_x0020_10}}<br></a>
+                                <a v-if="term.Link_x0020_11 !== null" :href="term.URL_x0020_11" target="_blank">- {{term.Link_x0020_11}}<br></a>
+                                <a v-if="term.Link_x0020_12 !== null" :href="term.URL_x0020_12" target="_blank">- {{term.Link_x0020_12}}<br></a>
+                                <a v-if="term.Link_x0020_13 !== null" :href="term.URL_x0020_13" target="_blank">- {{term.Link_x0020_13}}<br></a>
+                                <a v-if="term.Link_x0020_14 !== null" :href="term.URL_x0020_14" target="_blank">- {{term.Link_x0020_14}}<br></a>
+                                <a v-if="term.Link_x0020_15 !== null" :href="term.URL_x0020_15" target="_blank">- {{term.Link_x0020_15}}</a>
+                                
+                            </div>
+
+                    </div>
+                </div>
+
+                <div class="no-results" style="display: none; font-size: 16px; margin-top: 20px">No document found</div>
+
+        </div>
+    </div>
+    
+    <div class="right-column">
+        <br/>
+        <h2>References</h2>
+        <hr>
+        <div v-for="reference in orderedReferences">
+                <span><a :href="reference.URL" target="_blank">{{reference.Title}}</a></span><br><hr>
+        </div> 
+
+       
+    </div>    
+</div>
+
+<!-- <script src="https://intranet.itu.int/gs/hrmd/asset/vue.min.js"></script> -->
+<script src="https://intranet.itu.int/gs/hrmd/asset/vue(dev-version).js"></script>
+<script src="https://intranet.itu.int/gs/hrmd/asset/lodash-4.17.11-min.js"></script>
+<script src="https://intranet.itu.int/gs/hrmd/asset/jquery-v2.2.2.js"></script> 
+<script src="https://intranet.itu.int/gs/hrmd/asset/isotope-v306.js"></script>​  
+<script src="https://intranet.itu.int/gs/hrmd/asset/bluebird.min.js"></script>
+
+
+
+<script>
+
+    new Vue({
+        
+        el: "#app",
+        data: {
+            index:[],
+            categories:[],
+            categories2:[],
+            themeCategories:[],
+            contractCategories:[],
+            references:[], 
+   
+        },
+
+        
+        mounted: function (){
+
+                 // Get IE or Edge browser version
+
+                var version = detectIE();
+
+                if (version === false) {
+                document.getElementById('result').innerHTML = '';
+                }  else {
+                document.getElementById('result').innerHTML = "For a better user experience use Google Chrome : <a href='https://www.google.com/chrome/'>Download link</a> ";
+                }
+
+                /**
+                * detect IE
+                * returns true or false, if browser is not Internet Explorer
+                */
+                function detectIE() {
+                var ua = window.navigator.userAgent;
+
+                var msie = ua.indexOf('MSIE ');
+                if (msie > 0) {
+                    // IE 10 or older 
+                    return true;
+                }
+
+                var trident = ua.indexOf('Trident/');
+                if (trident > 0) {
+                    // IE 11 
+                    var rv = ua.indexOf('rv:');
+                    return true;
+                }
+
+                var edge = ua.indexOf('Edge/');
+                if (edge > 0) {
+                    // Edge (IE 12+) 
+                    return true;
+                }
+
+                // other browser
+                return false;
+                }
+
+                vm2 = this
+
+                var call1 = new Promise(function(resolve, reject) {
+
+                var endPointUrl = "https://intranet.itu.int/gs/hrmd/_api/web/lists/getbyTitle('hr-handbook-index')/items?$top=500";
+                var headers ={
+                    "ACCEPT": "application/json;odata=verbose"
+                };
+                this.status = "getting data...";
+                var vm = vm2;
+                jQuery.ajax({
+                    url: endPointUrl,
+                    type:"GET",
+                    headers: headers,
+                    success: function(data){
+                      resolve(  
+                        vm.index = data.d.results,
+                        vm.index.forEach(function (element) {
+                            if (element.OData__x006d_580 != null && element.OData__x006d_580.results != undefined) {
+                                var tmpCat = '';
+                                element.OData__x006d_580.results.forEach(function (res) {
+                                if (res != undefined) {                                           
+                                    tmpCat += ' ' + res; 
+                                }
+                                });
+                                vm.categories.push(tmpCat); 
+                            } else {vm.categories.push(null)}
+                            }) ,
+
+                        vm.index.forEach(function (element) {
+                        if (element.OData__x0070_tm2 != null && element.OData__x0070_tm2.results != undefined) {
+                            var tmpCat = '';
+                            element.OData__x0070_tm2.results.forEach(function (res) {
+                            if (res != undefined) {                                           
+                                tmpCat += ' ' + res; 
+                            }
+                            });
+                            vm.categories2.push(tmpCat); 
+                        } else {vm.categories2.push(null)}
+                        })  
+                             )                
+                    }
+                })  
+
+                })
+
+                var call2 = new Promise(function(resolve, reject) {
+
+                var endPointUrl2 = "https://intranet.itu.int/gs/hrmd/_api/web/lists/getbyTitle('hr-handbook-theme-categories')/items";
+                var headers ={
+                    "ACCEPT": "application/json;odata=verbose"
+                };
+                this.status = "getting data...";
+                var vm = vm2;
+                jQuery.ajax({
+                    url: endPointUrl2,
+                    type:"GET",
+                    headers: headers,
+                    success: function(data){
+                        resolve(vm.themeCategories = data.d.results )                      
+                    }
+                })  
+
+                })
+
+                var call3 = new Promise(function(resolve, reject) {
+                var endPointUrl3 = "https://intranet.itu.int/gs/hrmd/_api/web/lists/getbyTitle('hr-handbook-contract-categories')/items";
+                var headers ={
+                    "ACCEPT": "application/json;odata=verbose"
+                };
+                this.status = "getting data...";
+                var vm = vm2;
+                jQuery.ajax({
+                    url: endPointUrl3,
+                    type:"GET",
+                    headers: headers,
+                    success: function(data){
+                        resolve(vm.contractCategories = data.d.results)                       
+                    }
+                })  
+
+                })
+
+                var call4 = new Promise(function(resolve, reject) {
+  
+                var endPointUrl4 = "https://intranet.itu.int/gs/hrmd/_api/web/lists/getbyTitle('hr-handbook-references')/items";
+                var headers ={
+                    "ACCEPT": "application/json;odata=verbose"
+                };
+                this.status = "getting data...";
+                var vm = vm2;
+                jQuery.ajax({
+                    url: endPointUrl4,
+                    type:"GET",
+                    headers: headers,
+                    success: function(data){
+                        resolve(vm.references = data.d.results)                        
+                    }
+                }) 
+
+                })
+
+
+               Promise.all([call1,call2,call3,call4]).then(
+               function(){
+               
+                // external js: isotope.pkgd.js
+
+                // store filter for each group
+                var buttonFilters = {};
+                var buttonFilter;
+                // quick search regex
+                var qsRegex;
+
+                // init Isotope
+
+                var $grid = $('.grid').isotope({
+                itemSelector: '.element-item',
+                filter: function() {
+                var $this = $(this);
+                var searchResult = qsRegex ? $this.find('.index').text().match( qsRegex ) : true;
+                var buttonResult = buttonFilter ? $this.is( buttonFilter ) : true;
+                return searchResult && buttonResult;
+                },
+                getSortData:{
+                    index: '.index',
+                }
+                });
+
+                $('.filters').on( 'click', '.button', function() {
+                var $this = $(this);
+                // get group key
+                var $buttonGroup = $this.parents('.button-group');
+                var filterGroup = $buttonGroup.attr('data-filter-group');
+                // set filter for group
+                buttonFilters[ filterGroup ] = $this.attr('data-filter');
+                // combine filters
+                buttonFilter = concatValues( buttonFilters );
+                // Isotope arrange
+                if (version === false) {
+                $grid.isotope();
+                } else {
+                $grid.isotope({transitionDuration: 0});
+                }
+
+                });
+
+                // use value of search field to filter
+                var $quicksearch = $('.quicksearch').keyup( debounce( function() {
+                qsRegex = new RegExp( $quicksearch.val(), 'gi' );
+                $grid.isotope();
+                }) );
+
+                // sort alphabetically by default
+                $grid.isotope({ sortBy : 'index' });
+
+                // change is-checked class on buttons
+                $('.button-group').each( function( i, buttonGroup ) {
+                var $buttonGroup = $( buttonGroup );
+                $buttonGroup.on( 'click', 'button', function() {
+                $buttonGroup.find('.is-checked').removeClass('is-checked');
+                $( this ).addClass('is-checked');
+                });
+                });
+
+                // flatten object by concatting values
+                function concatValues( obj ) {
+                var value = '';
+                for ( var prop in obj ) {
+                value += obj[ prop ];
+                }
+                return value;
+                }
+
+                // debounce so filtering doesn't happen every millisecond
+                function debounce( fn, threshold ) {
+                var timeout;
+                threshold = threshold || 100;
+                return function debounced() {
+                clearTimeout( timeout );
+                var args = arguments;
+                var _this = this;
+                function delayed() {
+                    fn.apply( _this, args );
+                }
+                timeout = setTimeout( delayed, threshold );
+                };
+                }
+
+                $grid.on( 'arrangeComplete', function( event, filteredItems ) {
+                //console.log( filteredItems.length );
+                if(filteredItems.length == 0){
+                    $(".no-results").show("fast");
+                }else{
+                    $(".no-results").hide("fast");
+                }
+                });
+                
+
+                
+                $(".grid").css('opacity','1');  
+                $(".loader").hide("fast");    
+
+                // start with regular filter
+                $("button[data-filter='.regular']").click(); 
+
+                //reset when changing theme categories
+                 $(".button:not([data-filter='.regular'],[data-filter='.short-term'],[data-filter='.intern'],[data-filter='.consultant'],[data-filter='.elected'])").click(function(){
+                    $quicksearch.val('');
+                    $quicksearch.keyup();
+                     })
+
+                })
+                
+              
+                },
+
+        // Order items according to their Order Number
+        computed:{
+     
+            orderedThemeCategories: function(){
+                    return _.orderBy(this.themeCategories, 'Order0')
+            },  
+
+            orderedContractCategories: function(){
+                    return _.orderBy(this.contractCategories, 'Order0')
+            },  
+
+            orderedReferences: function(){
+                    return _.orderBy(this.references, 'Order0')
+            },  
+
+           
+
+        }
+
+    });
+
+
+</script>
